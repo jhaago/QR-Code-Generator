@@ -4,7 +4,8 @@ enum class QrStyle(
     val displayName: String,
     val description: String,
 ) {
-    CLASSIC("Classic", "Maximum compatibility"),
+    CLASSIC("Classic", "Solid square modules"),
     ROUNDED("Rounded", "Soft rounded modules"),
-    DOTS("Dots", "Modern dot pattern"),
+    DOTS("Dots", "Clean circular modules"),
+    GAPPED("Gapped", "Crisp separated tiles"),
 }
