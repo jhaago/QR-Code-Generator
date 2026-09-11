@@ -14,7 +14,7 @@ object QrRenderer {
 
     fun render(
         content: String,
-        style: QrStyle,
+        qrStyle: QrStyle,
         requestedSizePx: Int = 1200,
         foregroundColor: Int = Color.BLACK,
         backgroundColor: Int = Color.WHITE,
@@ -39,9 +39,12 @@ object QrRenderer {
         val squarePaint = Paint().apply {
             color = foregroundColor
             isAntiAlias = false
-            style = Paint.Style.FILL
+            this.style = Paint.Style.FILL
         }
-        val styledPaint = Paint(squarePaint).apply { isAntiAlias = true }
+        val styledPaint = Paint(squarePaint).apply {
+            isAntiAlias = true
+            this.style = Paint.Style.FILL
+        }
 
         for (y in 0 until moduleCount) {
             for (x in 0 until moduleCount) {
@@ -52,18 +55,17 @@ object QrRenderer {
                 val right = left + moduleSizePx
                 val bottom = top + moduleSizePx
 
-                // Keep the three finder patterns square for dependable scanning even
-                // when the data modules use a decorative style.
-                if (isFinderPatternModule(x, y, moduleCount) || style == QrStyle.CLASSIC) {
+                // Keep finder patterns square and full-sized for dependable scanning.
+                if (isFinderPatternModule(x, y, moduleCount) || qrStyle == QrStyle.CLASSIC) {
                     canvas.drawRect(left, top, right, bottom, squarePaint)
                     continue
                 }
 
-                when (style) {
+                when (qrStyle) {
                     QrStyle.CLASSIC -> Unit
                     QrStyle.ROUNDED -> {
-                        val inset = moduleSizePx * 0.06f
-                        val radius = moduleSizePx * 0.28f
+                        val inset = moduleSizePx * 0.04f
+                        val radius = moduleSizePx * 0.30f
                         canvas.drawRoundRect(
                             RectF(left + inset, top + inset, right - inset, bottom - inset),
                             radius,
@@ -71,10 +73,22 @@ object QrRenderer {
                             styledPaint,
                         )
                     }
+
                     QrStyle.DOTS -> {
                         val centerX = (left + right) / 2f
                         val centerY = (top + bottom) / 2f
-                        canvas.drawCircle(centerX, centerY, moduleSizePx * 0.36f, styledPaint)
+                        canvas.drawCircle(centerX, centerY, moduleSizePx * 0.42f, styledPaint)
+                    }
+
+                    QrStyle.GAPPED -> {
+                        val inset = moduleSizePx * 0.07f
+                        canvas.drawRect(
+                            left + inset,
+                            top + inset,
+                            right - inset,
+                            bottom - inset,
+                            styledPaint,
+                        )
                     }
                 }
             }
